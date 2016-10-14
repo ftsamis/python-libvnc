@@ -10,10 +10,12 @@ typedef struct _rfbClientPyData {
     struct _rfbClient *client;
     PyObject *got_framebuffer_update;
     PyObject *handle_cursor_pos;
+    PyObject *finished_framebuffer_update;
 } rfbClientPyData;
 
 static void GotFrameBufferUpdateProxyCallback(struct _rfbClient *client, int x, int y, int w, int h);
 static rfbBool HandleCursorPosProxyCallback(struct _rfbClient *client, int x, int y);
+static void FinishedFrameBufferUpdateProxyCallback(struct _rfbClient *client);
 static int clients_count = 0;
 static rfbClientPyData *client_wrappers[512] = {0};
 
@@ -48,7 +50,15 @@ static rfbBool HandleCursorPosProxyCallback(rfbClient *client, int x, int y) {
     }
     return TRUE;
 }
-    
+
+static void FinishedFrameBufferUpdateProxyCallback(rfbClient *client) {
+    rfbClientPyData *pydata = get_pydata_for_client(client);
+
+    PyObject *python_cb = pydata->finished_framebuffer_update;
+    if (python_cb != NULL) {
+        PyObject_CallObject(python_cb, NULL);
+    }
+}
 
 const rfbBool _rfbClient_initialized_get(rfbClient *client) {
     rfbClientPyData *pydata = get_pydata_for_client(client);
@@ -178,6 +188,18 @@ typedef struct _rfbClient {
         Py_RETURN_NONE;
     }
     
+    PyObject *set_finished_framebuffer_update_callback(PyObject *cb) {
+        if (!PyCallable_Check(cb)) {
+            PyErr_SetString(PyExc_TypeError, "Need a callable object!");
+            return NULL;
+        }
+        Py_XINCREF(cb);
+        rfbClientPyData *pydata = get_pydata_for_client($self);
+        pydata->finished_framebuffer_update = cb;
+        $self->FinishedFrameBufferUpdate = FinishedFrameBufferUpdateProxyCallback;
+        Py_RETURN_NONE;
+    }
+
     // FIXME: Temporary design. Copying the framebuffer to a Python bytes object
     // is not what we want.
     PyObject *get_framebuffer() {
