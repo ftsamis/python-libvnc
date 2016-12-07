@@ -64,10 +64,8 @@ const rfbBool _rfbClient_initialized_get(rfbClient *client) {
     rfbClientPyData *pydata = get_pydata_for_client(client);
     return pydata->initialized;
 }
-    
+
 %}
-
-
 
 typedef struct _rfbClient {
     uint8_t *frameBuffer;
@@ -200,14 +198,13 @@ typedef struct _rfbClient {
         Py_RETURN_NONE;
     }
 
-    // FIXME: Temporary design. Copying the framebuffer to a Python bytes object
-    // is not what we want.
+    // FIXME: The MemoryView format should be different depending on the bits
+    //        per pixel.
     PyObject *get_framebuffer() {
         rfbPixelFormat *pf=&$self->format;
 	    int bpp = pf->bitsPerPixel/8;
         int size = $self->width * $self->height * bpp;
-        return PyBytes_FromStringAndSize($self->frameBuffer, size);
+        return PyMemoryView_FromMemory($self->frameBuffer, size, PyBUF_READ);
     }
 }
-
 
