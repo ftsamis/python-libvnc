@@ -1,5 +1,7 @@
-#if defined(SWIGPYTHON)
-%module(package="libvnc") keysym
-#endif
+%module(package='libvncclient') keysym
 
-%include "rfb/keysym.h"
+%{
+#include <rfb/keysym.h>
+%}
+
+%include rfb/keysym.h
