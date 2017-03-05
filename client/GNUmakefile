@@ -7,6 +7,12 @@ all: generate
 generate: setup.py
 	$(PYTHON) setup.py build_ext
 
+install: generate
+	$(PYTHON) setup.py install
+
+userinstall: generate
+	$(PYTHON) setup.py install --user
+
 clean:
 	-rm -rf build
 
