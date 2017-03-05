@@ -4,7 +4,6 @@
 %{
 #define SWIG_FILE_WITH_INIT
 #include <rfb/rfbclient.h>
-#include <rfb/rfbproto.h>
 %}
 
 %include "common.i"
