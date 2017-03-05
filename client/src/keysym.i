@@ -1,4 +1,4 @@
-%module(package='libvncclient') keysym
+%module(package="libvncclient") keysym
 
 %{
 #include <rfb/keysym.h>
