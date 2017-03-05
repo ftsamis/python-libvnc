@@ -47,8 +47,8 @@ class Build_Ext_find_swig3(distutils.command.build_ext.build_ext):
 
 
 
-libvncclient_module = Extension('_libvncclient',
-                               sources=['libvncclient/libvncclient.i'],
+libvncclient_module = Extension('___init__',
+                               sources=['libvncclient/__init__.i'],
                                include_dirs=['/usr/local/include'],
                                library_dirs=['/usr/local/lib'],
                                libraries=['vncclient'],

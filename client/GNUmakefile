@@ -18,7 +18,7 @@ clean:
 
 veryclean: clean
 	-rm -f libvncclient/keysym_wrap.c
-	-rm -f libvncclient/libvncclient_wrap.c
+	-rm -f libvncclient/__init___wrap.c
 	-rm -f libvncclient/keysym.py
-	-rm -f libvncclient/libvncclient.py
+	-rm -f libvncclient/__init__.py
 
