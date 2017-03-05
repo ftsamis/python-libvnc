@@ -1,28 +1,47 @@
-# python-libvnc
+python-libvnc
+=============
+
 Development of Python 3 bindings for libvncserver/libvncclient.
 Currently this is only in a proof-of-concept phase for the libvncclient.
 
-# Build dependencies
+Build dependencies
+------------------
+
 python3.5-dev
 swig3.0
 libvncserver-dev
 
-# Run dependencies
+Run dependencies
+----------------
+
 python3.5
 libvncclient1
 
-# Build instructions
+Build instructions
+------------------
+
 Run make:
-```make```
+
+```
+make
+```
 
 Optionally, install the bindings system-wide:
-```make install```
+
+```
+make install
+```
 
 or in the user's home directory:
-```make userinstall```
+
+```
+make userinstall
+```
 
 
-# Run example
+Run example
+-----------
+
 First open a x11vnc server on localhost for our client to connect to and then:
 
 ```
