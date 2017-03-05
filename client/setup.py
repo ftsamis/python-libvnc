@@ -54,6 +54,13 @@ libvncclient_module = Extension('___init__',
                                libraries=['vncclient'],
                                )
 
+rfbclient_module = Extension('_rfbclient',
+                           sources=['libvncclient/rfbclient.i'],
+                           include_dirs=['/usr/local/include'],
+                           library_dirs=['/usr/local/lib'],
+                           libraries=['vncclient'],
+                           )
+
 keysym_module = Extension('_keysym',
                            sources=['libvncclient/keysym.i'],
                            swig_opts=['-I/usr/local/include'],
@@ -67,7 +74,7 @@ setup (name = 'libvncclient',
        author      = "Fotis Tsamis",
        description = """Python bindings for libvncclient""",
        ext_package = "libvncclient",
-       ext_modules = [libvncclient_module, keysym_module],
+       ext_modules = [libvncclient_module, rfbclient_module, keysym_module],
        packages = ["libvncclient"],
        cmdclass={
         "build_ext": Build_Ext_find_swig3

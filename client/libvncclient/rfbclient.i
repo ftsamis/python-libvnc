@@ -1,3 +1,15 @@
+%module(package="libvncclient") rfbclient
+
+%include <typemaps.i>
+
+%{
+#define SWIG_FILE_WITH_INIT
+#include <rfb/rfbclient.h>
+%}
+
+%include "common.i"
+%rename("%(undercase)s") "";
+
 %nodefault _rfbClientWrapper;
 %rename("RFBClient") _rfbClient;
 

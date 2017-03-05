@@ -6,6 +6,10 @@
 #include <rfb/rfbclient.h>
 %}
 
+%pythoncode %{
+from libvncclient.rfbclient import *
+%}
+
 %include "common.i"
 
 // Use a global rule for renaming to undercase instead of 
@@ -19,4 +23,4 @@ int ListenAtTcpPort(int port);
 
 
 %include "rfbproto.i"
-%include "rfbclient.i"
+

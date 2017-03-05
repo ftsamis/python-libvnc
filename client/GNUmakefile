@@ -21,4 +21,6 @@ veryclean: clean
 	-rm -f libvncclient/__init___wrap.c
 	-rm -f libvncclient/keysym.py
 	-rm -f libvncclient/__init__.py
+	-rm -f libvncclient/rfbclient_wrap.c
+	-rm -f libvncclient/rfbclient.py
 
