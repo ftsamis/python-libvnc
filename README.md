@@ -3,36 +3,30 @@ Development of Python 3 bindings for libvncserver/libvncclient.
 Currently this is only in a proof-of-concept phase for the libvncclient.
 
 # Build dependencies
-python3.4-dev
+python3.5-dev
 swig3.0
 libvncserver-dev
 
 # Run dependencies
-python3.4
+python3.5
 libvncclient1
 
 # Build instructions
-Create a build directory:
-```mkdir build```
+Run make:
+```make```
 
-Use SWIG to generate the C wrapping code along with the top-level python module
-```swig3.0 -python -outdir build/ -o build/libvncclient_wrap.c src/libvncclient.i```
+Optionally, install the bindings system-wide:
+```make install```
 
-Compile the C wrapping code as position independent code
-```gcc -O2 -fPIC -c build/libvncclient_wrap.c -I/usr/include/python3.4 -I/usr/include/rfb  -o build/libvncclient_wrap.o```
-
-Link the compiled object to the libvncclient library and create the final shared object
-```gcc -shared build/libvncclient_wrap.o -o build/_libvncclient.so -lvncclient```
+or in the user's home directory:
+```make userinstall```
 
 
 # Run example
 First open a x11vnc server on localhost for our client to connect to and then:
 
-```python
+```
 $ python3
-Python 3.4.3+ (default, Oct 14 2015, 16:03:50) 
-[GCC 5.2.1 20151010] on linux
-Type "help", "copyright", "credits" or "license" for more information.
 >>> import libvncclient
 >>> client = libvncclient.RFBClient(8,3,4)
 >>> client.init_client([])
