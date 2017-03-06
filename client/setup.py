@@ -49,23 +49,16 @@ class Build_Ext_find_swig3(distutils.command.build_ext.build_ext):
 
 libvncclient_module = Extension('___init__',
                                sources=['libvncclient/__init__.i'],
-                               include_dirs=['/usr/local/include'],
-                               library_dirs=['/usr/local/lib'],
                                libraries=['vncclient'],
                                )
 
 rfbclient_module = Extension('_rfbclient',
                            sources=['libvncclient/rfbclient.i'],
-                           include_dirs=['/usr/local/include'],
-                           library_dirs=['/usr/local/lib'],
                            libraries=['vncclient'],
                            )
 
 keysym_module = Extension('_keysym',
                            sources=['libvncclient/keysym.i'],
-                           swig_opts=['-I/usr/local/include'],
-                           include_dirs=['/usr/local/include'],
-                           library_dirs=['/usr/local/lib'],
                            libraries=['vncclient'],
                            )
 
