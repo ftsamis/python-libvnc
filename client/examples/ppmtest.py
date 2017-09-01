@@ -25,6 +25,7 @@ class RFBPPMWriter(object):
                                                 self.client.width, 
                                                 self.client.height), "UTF-8"))
         framebuffer = self.client.get_framebuffer()
+        # Skip the alpha channel byte (every 4th byte). PPM does not support alpha
         for i in range(0, len(framebuffer), 4):
             f.write(framebuffer[i:i+3])
         f.close()
