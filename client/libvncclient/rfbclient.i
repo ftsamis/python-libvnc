@@ -19,6 +19,7 @@
 // FIXME: This is probably a temporary design.
 typedef struct _rfbClientPyData {
     rfbBool initialized;
+    rfbBool init_failed;
     struct _rfbClient *client;
     PyObject *got_framebuffer_update;
     PyObject *handle_cursor_pos;
@@ -77,6 +78,11 @@ const rfbBool _rfbClient_initialized_get(rfbClient *client) {
     return pydata->initialized;
 }
 
+rfbBool check_init_failed(rfbClient *client) {
+    rfbClientPyData *pydata = get_pydata_for_client(client);
+    return pydata->init_failed;
+}
+
 %}
 
 typedef struct _rfbClient {
@@ -112,6 +118,7 @@ typedef struct _rfbClient {
         rfbClientPyData *pydata = malloc(sizeof(rfbClientPyData));
         pydata->client = c;
         pydata->initialized = FALSE;
+        pydata->init_failed = FALSE;
         client_wrappers[clients_count++] = pydata;
 
         return c;
@@ -127,10 +134,20 @@ typedef struct _rfbClient {
         free(pydata);
     }
     
+    // For all the following "methods" make sure that the init_client has not been called and failed before calling them.
+    // In the case where init_client has failed, every method will be deemed unusable. The user will have to start with a new object
+    %contract {
+        require:
+            ! check_init_failed($self);
+    }
+
     %exception init_client {
         $action
         if (!result) {
-            PyErr_SetString(PyExc_RuntimeError, "Could not initialize client");
+            // At this point we know that init_client will have returned FALSE
+            // and therefore rfbClientCleanup has already been called by the library,
+            // which means that we have lost the allocated rfbClient (i.e. we're screwed).
+            PyErr_SetString(PyExc_RuntimeError, "Could not initialize client. At this point the underlying C rfbClient structure has been free'd by the C library and the only way to do anything useful is to start over with a new object.");
             return NULL;
         }
     }
@@ -139,6 +156,7 @@ typedef struct _rfbClient {
         rfbBool success = rfbInitClient($self, argc, argv);
         rfbClientPyData *pydata = get_pydata_for_client($self);
         pydata->initialized = success;
+        pydata->init_failed = !success;
         return success;
     }
     
