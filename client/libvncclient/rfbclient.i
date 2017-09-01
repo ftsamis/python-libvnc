@@ -87,10 +87,33 @@ rfbBool check_init_failed(rfbClient *client) {
 
 %}
 
+typedef struct {
+  rfbBool shareDesktop;
+  rfbBool viewOnly;
+
+  // encodingsString is not const http://www.swig.org/Doc3.0/SWIG.html#SWIG_nn13
+  const char* encodingsString;
+
+  rfbBool useBGR233;
+  int nColours;
+  rfbBool forceOwnCmap;
+  rfbBool forceTrueColour;
+  int requestedDepth;
+
+  int compressLevel;
+  int qualityLevel;
+  rfbBool enableJPEG;
+  rfbBool useRemoteCursor;
+  rfbBool palmVNC;  /**< use palmvnc specific SetScale (vs ultravnc) */
+  int scaleSetting; /**< 0 means no scale set, else 1/scaleSetting */
+} AppData;
+
+
 typedef struct _rfbClient {
     uint8_t *frameBuffer;
     int width;
     int height;
+    AppData appData;
     int major;
     int minor;
     int sock;
