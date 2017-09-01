@@ -17,7 +17,7 @@ class RFBPPMWriter(object):
             if not self.update():
                 break
 
-    def write_ppm(self, fname="vnc-screenshot.ppm"):
+    def write_ppm(self, client, fname="vnc-screenshot.ppm"):
         print('Writing the framebuffer to %s' % fname)
         f = open(fname, "wb")
         f.write(bytes("P6\n# %s\n%d %d\n255\n" % 

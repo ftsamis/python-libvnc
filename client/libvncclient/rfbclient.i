@@ -21,6 +21,8 @@ typedef struct _rfbClientPyData {
     rfbBool initialized;
     rfbBool init_failed;
     struct _rfbClient *client;
+    PyObject *pyobj;
+
     PyObject *got_framebuffer_update;
     PyObject *handle_cursor_pos;
     PyObject *finished_framebuffer_update;
@@ -44,10 +46,9 @@ rfbClientPyData *get_pydata_for_client(rfbClient *client) {
 
 static void GotFrameBufferUpdateProxyCallback(rfbClient *client, int x, int y, int w, int h) {
     rfbClientPyData *pydata = get_pydata_for_client(client);
-
     PyObject *python_cb = pydata->got_framebuffer_update;
     if (python_cb != NULL) {
-        PyObject *args = Py_BuildValue("iiii", x, y, w, h);
+        PyObject *args = Py_BuildValue("(Oiiii)", pydata->pyobj, x, y, w, h);
         PyObject_CallObject(python_cb, args);
         Py_DECREF(args);
     }
@@ -57,7 +58,7 @@ static rfbBool HandleCursorPosProxyCallback(rfbClient *client, int x, int y) {
     rfbClientPyData *pydata = get_pydata_for_client(client);
     PyObject *python_cb = pydata->handle_cursor_pos;
     if (python_cb != NULL) {
-        PyObject *args = Py_BuildValue("ii", x, y);
+        PyObject *args = Py_BuildValue("(Oii)", pydata->pyobj, x, y);
         PyObject_CallObject(python_cb, args);
         Py_DECREF(args);
     }
@@ -69,7 +70,8 @@ static void FinishedFrameBufferUpdateProxyCallback(rfbClient *client) {
 
     PyObject *python_cb = pydata->finished_framebuffer_update;
     if (python_cb != NULL) {
-        PyObject_CallObject(python_cb, NULL);
+        PyObject *args = Py_BuildValue("(O)", pydata->pyobj);
+        PyObject_CallObject(python_cb, args);
     }
 }
 
@@ -119,6 +121,7 @@ typedef struct _rfbClient {
         pydata->client = c;
         pydata->initialized = FALSE;
         pydata->init_failed = FALSE;
+        pydata->pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(c), SWIGTYPE_p__rfbClient,  0);
         client_wrappers[clients_count++] = pydata;
 
         return c;
