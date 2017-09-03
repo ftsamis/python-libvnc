@@ -72,6 +72,7 @@ static void FinishedFrameBufferUpdateProxyCallback(rfbClient *client) {
     if (python_cb != NULL) {
         PyObject *args = Py_BuildValue("(O)", pydata->pyobj);
         PyObject_CallObject(python_cb, args);
+        Py_DECREF(args);
     }
 }
 
