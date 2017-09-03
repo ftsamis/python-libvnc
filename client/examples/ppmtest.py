@@ -7,15 +7,16 @@ from libvncclient import RFBClient
 
 
 class RFBPPMWriter(object):
-    def __init__(self):
+    def __init__(self, args):
+        self.written = False
         # bitsPerSample, samplesPerPixel, bytesPerPixel
         self.client = RFBClient(8, 3, 4)
         self.client.set_finished_framebuffer_update_callback(self.write_ppm)
-        self.client.init_client([])
-        while True:
-            print('loop')
-            if not self.update():
-                break
+        self.client.init_client(args)
+        while not self.written:
+            msg = self.client.wait_for_message(100000)
+            if msg:
+                self.client.handle_server_message()
 
     def write_ppm(self, client, fname="vnc-screenshot.ppm"):
         print('Writing the framebuffer to %s' % fname)
@@ -29,13 +30,7 @@ class RFBPPMWriter(object):
         for i in range(0, len(framebuffer), 4):
             f.write(framebuffer[i:i+3])
         f.close()
-        sys.exit(0)
-    
-    def update(self):
-        msg = self.client.wait_for_message(50)
-        handle = self.client.handle_server_message()
-        return msg >= 0 and handle
+        self.written = True
 
-
-RFBPPMWriter()
+RFBPPMWriter(sys.argv)
 
